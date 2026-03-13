@@ -5,29 +5,7 @@ import plotly.express as px
 from streamlit_folium import st_folium
 
 st.set_page_config(layout="wide")
-st.markdown("""
-<style>
 
-/* wallpaper background */
-.stApp{
-background-image:url("https://img.freepik.com/free-photo/3d-rendering-planet-earth_23-2150498519.jpg?semt=ais_rp_50_assets&w=740&q=80");
-background-size:cover;
-background-position:center;
-background-attachment:fixed;
-}
-
-/* transparent container */
-.block-container{
-background: transparent;
-}
-
-/* remove grey layer */
-[data-testid="stAppViewContainer"]{
-background: transparent;
-}
-
-</style>
-""", unsafe_allow_html=True)
 
 # =========================
 # HEADER TITLE IN TOOLBAR (center, auto light/dark)
