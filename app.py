@@ -53,7 +53,7 @@ left:20px;
 
 /* title */
 .dashboard-title{
-font-size:26px;
+font-size:40px;
 font-weight:700;
 color:var(--text-color);
 }
