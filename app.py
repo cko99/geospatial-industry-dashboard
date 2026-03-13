@@ -125,43 +125,77 @@ with col_left:
 # =========================
 # MAP PANEL (NO NEATLINE / GRIDLINE)
 # =========================
+# =========================
+# MAP PANEL
+# =========================
 with col_map:
 
     m = folium.Map(
-    location=[4.5,102],
-    zoom_start=6,
-    tiles=None
-)
+        location=[4.5, 102],
+        zoom_start=6,
+        tiles=None
+    )
 
-# OpenStreetMap
-folium.TileLayer(
-    "OpenStreetMap",
-    name="OpenStreetMap"
-).add_to(m)
+    # OpenStreetMap
+    folium.TileLayer(
+        "OpenStreetMap",
+        name="OpenStreetMap"
+    ).add_to(m)
 
-# Satellite (ESRI - Google Earth style)
-folium.TileLayer(
-    tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-    attr="ESRI Satellite",
-    name="Satellite"
-).add_to(m)
+    # Satellite
+    folium.TileLayer(
+        tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        attr="ESRI Satellite",
+        name="Satellite"
+    ).add_to(m)
 
-# Hybrid Labels
-folium.TileLayer(
-    tiles="https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
-    attr="ESRI Labels",
-    name="Hybrid Labels"
-).add_to(m)
+    # Hybrid Labels
+    folium.TileLayer(
+        tiles="https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+        attr="ESRI Labels",
+        name="Hybrid Labels"
+    ).add_to(m)
 
-# Terrain
-folium.TileLayer(
-    tiles="https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}.jpg",
-    attr="Map tiles by Stamen Design",
-    name="Terrain"
-).add_to(m)
+    # Terrain
+    folium.TileLayer(
+        tiles="https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}.jpg",
+        attr="Map tiles by Stamen Design",
+        name="Terrain"
+    ).add_to(m)
 
-folium.LayerControl().add_to(m)
+    # Marker colours
+    color_map = {
+        "hydrography": "blue",
+        "gis": "green",
+        "drone": "red",
+        "engineering survey": "purple",
+        "remote sensing": "orange",
+        "land survey": "darkblue"
+    }
 
+    for _, row in data.iterrows():
+
+        popup_text = f"""
+        <b>{row.get('company','')}</b><br>
+        Industry: {row.get('industry','')}<br>
+        State: {row.get('state','')}<br>
+        City: {row.get('city','')}
+        """
+
+        folium.Marker(
+            location=[row["latitude"], row["longitude"]],
+            popup=popup_text,
+            icon=folium.Icon(
+                color=color_map.get(
+                    str(row.get("industry","")).lower(),
+                    "gray"
+                )
+            )
+        ).add_to(m)
+
+    folium.LayerControl().add_to(m)
+
+    st_folium(m, width=800)
     # Marker colours
     color_map = {
         "hydrography": "blue",
