@@ -9,18 +9,21 @@ st.markdown("""
 <style>
 
 /* wallpaper background */
-.stApp {
-    background-image: url("https://img.freepik.com/free-photo/3d-rendering-planet-earth_23-2150498519.jpg?semt=ais_rp_50_assets&w=740&q=80");
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+.stApp{
+background-image:url("https://img.freepik.com/free-photo/3d-rendering-planet-earth_23-2150498519.jpg?semt=ais_rp_50_assets&w=740&q=80");
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
 }
 
-/* transparent dashboard layer */
-.block-container {
-    background: rgba(255,255,255,0.85);
-    padding: 20px;
-    border-radius: 10px;
+/* transparent container */
+.block-container{
+background: transparent;
+}
+
+/* remove grey layer */
+[data-testid="stAppViewContainer"]{
+background: transparent;
 }
 
 </style>
