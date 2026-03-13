@@ -8,7 +8,7 @@ st.set_page_config(layout="wide")
 st.markdown("""
 <style>
 
-/* wallpaper background */
+/* wallpaper */
 .stApp{
 background-image:url("https://images.unsplash.com/photo-1469474968028-56623f02e42e");
 background-size:cover;
@@ -16,35 +16,39 @@ background-position:center;
 background-attachment:fixed;
 }
 
-/* dashboard container transparent */
+/* transparent container */
 .block-container{
-background: transparent;
+background:transparent;
 }
 
-/* restore header */
-header[data-testid="stHeader"]{
-background: transparent;
-}
-
-/* custom dashboard title */
-header[data-testid="stHeader"]::before{
-content:"Geospatial Industry Dashboard";
-position:absolute;
-left:50%;
-transform:translateX(-50%);
+/* FIXED HEADER */
+.custom-header{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:60px;
+display:flex;
+align-items:center;
+justify-content:center;
 font-size:26px;
 font-weight:700;
 color:var(--text-color);
+z-index:999;
 }
 
-/* adaptive text color */
-h1,h2,h3,h4,h5,h6,p,label,span{
-color:var(--text-color);
+/* push page content down */
+.main .block-container{
+padding-top:80px;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
+st.markdown(
+'<div class="custom-header">Geospatial Industry Dashboard</div>',
+unsafe_allow_html=True
+)
 
 # =========================
 # HEADER TITLE IN TOOLBAR (center, auto light/dark)
