@@ -126,8 +126,44 @@ with col_left:
 # MAP PANEL (NO NEATLINE / GRIDLINE)
 # =========================
 with col_map:
-    m = folium.Map(location=[4.5, 102], zoom_start=6)
 
+    m = folium.Map(
+        location=[4.5,102],
+        zoom_start=6,
+        tiles=None
+    )
+
+    # OpenStreetMap
+    folium.TileLayer(
+        "OpenStreetMap",
+        name="OpenStreetMap"
+    ).add_to(m)
+
+    # Satellite (Google Earth style)
+    folium.TileLayer(
+        tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        attr="ESRI Satellite",
+        name="Satellite",
+        overlay=False,
+        control=True
+    ).add_to(m)
+
+    # Hybrid (Satellite + label)
+    folium.TileLayer(
+        tiles="https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+        attr="ESRI Labels",
+        name="Hybrid Labels",
+        overlay=True,
+        control=True
+    ).add_to(m)
+
+    # Terrain style
+    folium.TileLayer(
+        "Stamen Terrain",
+        name="Terrain"
+    ).add_to(m)
+
+    # Marker colours
     color_map = {
         "hydrography": "blue",
         "gis": "green",
@@ -138,17 +174,22 @@ with col_map:
     }
 
     for _, row in data.iterrows():
+
         popup_text = f"""
         <b>{row.get('company','')}</b><br>
         Industry: {row.get('industry','')}<br>
         State: {row.get('state','')}<br>
         City: {row.get('city','')}
         """
+
         folium.Marker(
             location=[row["latitude"], row["longitude"]],
             popup=popup_text,
-            icon=folium.Icon(color=color_map.get(str(row.get("industry","")).lower(), "gray"))
+            icon=folium.Icon(color=color_map.get(str(row.get("industry","")).lower(),"gray"))
         ).add_to(m)
+
+    # Basemap switcher
+    folium.LayerControl().add_to(m)
 
     st_folium(m, width=800)
 
