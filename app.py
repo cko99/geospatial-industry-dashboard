@@ -12,27 +12,26 @@ st.set_page_config(layout="wide")
 st.markdown("""
 <style>
 
-/* inject title into streamlit header */
-header[data-testid="stHeader"]::before {
-    content: "Geospatial Industry Dashboard";
-    font-size: 22px;
-    font-weight: 700;
-    margin-left: 20px;
+/* center title in streamlit toolbar */
+header[data-testid="stHeader"]{
+    position:relative;
 }
 
-/* align title with toolbar */
-header[data-testid="stHeader"] {
-    display:flex;
-    align-items:center;
-}
-
-/* auto color follow theme */
-header[data-testid="stHeader"]::before {
-    color: var(--text-color);
+/* dashboard title */
+header[data-testid="stHeader"]::before{
+    content:"Geospatial Industry Dashboard";
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:26px;
+    font-weight:700;
+    color:var(--text-color);
+    pointer-events:none;
 }
 
 </style>
 """, unsafe_allow_html=True)
+
 
 
 
