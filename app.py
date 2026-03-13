@@ -13,39 +13,29 @@ st.markdown(
 """
 <style>
 
-.header-container{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-background-color:#0e1117;
-padding:20px;
-z-index:999;
-border-bottom:2px solid #333;
-}
-
-.header-title{
-text-align:center;
-font-size:32px;
-font-weight:bold;
-color:white;
-}
-
+/* remove extra padding */
 .block-container{
-padding-top:100px;
+padding-top:1rem;
+}
+
+/* align title with streamlit toolbar */
+.dashboard-title{
+font-size:32px;
+font-weight:700;
+margin-top:-10px;
+margin-bottom:20px;
 }
 
 </style>
-
-<div class="header-container">
-<div class="header-title">
-Geospatial Industry Dashboard
-</div>
-</div>
-
 """,
 unsafe_allow_html=True
 )
+
+st.markdown(
+'<div class="dashboard-title">Geospatial Industry Dashboard</div>',
+unsafe_allow_html=True
+)
+
 
 
 # =========================
