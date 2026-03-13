@@ -10,9 +10,43 @@ st.set_page_config(layout="wide")
 # =========================
 
 st.markdown(
-"<h1 style='text-align:center;'>Geospatial Industry Dashboard</h1>",
+"""
+<style>
+
+.header-container{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+background-color:#0e1117;
+padding:20px;
+z-index:999;
+border-bottom:2px solid #333;
+}
+
+.header-title{
+text-align:center;
+font-size:32px;
+font-weight:bold;
+color:white;
+}
+
+.block-container{
+padding-top:100px;
+}
+
+</style>
+
+<div class="header-container">
+<div class="header-title">
+Geospatial Industry Dashboard
+</div>
+</div>
+
+""",
 unsafe_allow_html=True
 )
+
 
 # =========================
 # GOOGLE SHEET
