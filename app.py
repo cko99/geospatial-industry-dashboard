@@ -9,32 +9,31 @@ st.set_page_config(layout="wide")
 # TITLE
 # =========================
 
-st.markdown(
-"""
+st.markdown("""
 <style>
 
-/* remove extra padding */
-.block-container{
-padding-top:1rem;
+/* inject title into streamlit header */
+header[data-testid="stHeader"]::before {
+    content: "Geospatial Industry Dashboard";
+    font-size: 22px;
+    font-weight: 700;
+    margin-left: 20px;
 }
 
-/* align title with streamlit toolbar */
-.dashboard-title{
-font-size:32px;
-font-weight:700;
-margin-top:-10px;
-margin-bottom:20px;
+/* align title with toolbar */
+header[data-testid="stHeader"] {
+    display:flex;
+    align-items:center;
+}
+
+/* auto color follow theme */
+header[data-testid="stHeader"]::before {
+    color: var(--text-color);
 }
 
 </style>
-""",
-unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
 
-st.markdown(
-'<div class="dashboard-title">Geospatial Industry Dashboard</div>',
-unsafe_allow_html=True
-)
 
 
 
