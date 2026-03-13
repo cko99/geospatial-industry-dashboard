@@ -5,89 +5,171 @@ from streamlit_folium import st_folium
 
 st.set_page_config(layout="wide")
 
-st.title("Geospatial Industry Dashboard")
+# =========================
+# TITLE
+# =========================
 
-# GOOGLE SHEET CSV LINK
+st.markdown(
+"<h1 style='text-align:center;'>Geospatial Industry Dashboard</h1>",
+unsafe_allow_html=True
+)
+
+# =========================
+# GOOGLE SHEET
+# =========================
+
 sheet_url = "https://docs.google.com/spreadsheets/d/1Yge8HlHEiQUTazaQ1yy0hYney22MFMYzlMBfjBoWHD8/export?format=csv"
 
-# LOAD DATA
 try:
     data = pd.read_csv(sheet_url, header=1)
 
-    # buang column kosong dari column A
+    # remove unnamed columns
     data = data.loc[:, ~data.columns.str.contains("^Unnamed")]
 
-    # kemaskan nama column
+    # clean column names
     data.columns = data.columns.str.strip().str.lower()
 
 except Exception as e:
-    st.error("Failed to load Google Sheet")
+
+    st.error("Google Sheet failed to load")
     st.write(e)
     st.stop()
 
-# ======================
-# DASHBOARD ANALYTICS
-# ======================
+# =========================
+# INDUSTRY STATS
+# =========================
 
-st.subheader("Industry Distribution")
 industry_count = data["industry"].value_counts()
-st.bar_chart(industry_count)
 
-st.subheader("Company by State")
+# =========================
+# STATE STATS
+# =========================
+
 state_count = data["state"].value_counts()
-st.bar_chart(state_count)
 
-# ======================
-# FILTER
-# ======================
+# =========================
+# INDUSTRY FILTER
+# =========================
 
 industry_filter = st.selectbox(
-    "Filter Industry",
-    ["All"] + list(data["industry"].unique())
+"Filter Industry",
+["All"] + list(data["industry"].unique())
 )
 
 if industry_filter != "All":
     data = data[data["industry"] == industry_filter]
 
-# ======================
+# =========================
 # LAYOUT
-# ======================
+# =========================
 
-col1, col2, col3 = st.columns([1,2,1])
+col_left, col_map, col_right = st.columns([1,2,1])
 
-# ======================
-# AI PANEL
-# ======================
+# =========================
+# LEFT PANEL
+# =========================
 
-with col1:
+with col_left:
 
-    st.header("AI Career Assistant")
+    st.subheader("Industry Statistics")
+    st.bar_chart(industry_count)
+
+    st.subheader("Company by State")
+    st.bar_chart(state_count)
+
+    st.subheader("AI Career Assistant")
 
     question = st.text_input("Ask about geospatial companies")
 
     if question:
+
         st.write("Suggested companies:")
-        st.write(data["company"].head(3))
+
+        st.write(data["company"].head(5))
 
 
-# ======================
-# MAP
-# ======================
+# =========================
+# NEATLINE FUNCTION
+# =========================
 
-with col2:
+def draw_neatline(m):
+
+    north = 7.5
+    south = 1.0
+    west = 95.0
+    east = 110.0
+
+    steps = 10
+
+    lat_step = (north - south) / steps
+    lon_step = (east - west) / steps
+
+    # LEFT & RIGHT (horizontal ticks)
+
+    for i in range(steps + 1):
+
+        lat = south + i * lat_step
+
+        folium.PolyLine(
+        [(lat, west),(lat, west + 0.3)],
+        color="black",
+        weight=2
+        ).add_to(m)
+
+        folium.PolyLine(
+        [(lat, east - 0.3),(lat, east)],
+        color="black",
+        weight=2
+        ).add_to(m)
+
+    # TOP & BOTTOM (vertical ticks)
+
+    for i in range(steps + 1):
+
+        lon = west + i * lon_step
+
+        folium.PolyLine(
+        [(north - 0.3, lon),(north, lon)],
+        color="black",
+        weight=2
+        ).add_to(m)
+
+        folium.PolyLine(
+        [(south, lon),(south + 0.3, lon)],
+        color="black",
+        weight=2
+        ).add_to(m)
+
+    # outer frame
+
+    folium.Rectangle(
+        bounds=[[south,west],[north,east]],
+        color="black",
+        weight=3,
+        fill=False
+    ).add_to(m)
+
+
+# =========================
+# MAP PANEL
+# =========================
+
+with col_map:
 
     m = folium.Map(location=[4.5,102], zoom_start=6)
 
+    draw_neatline(m)
+
     color_map = {
-        "hydrography": "blue",
-        "gis": "green",
-        "drone": "red",
-        "engineering survey": "purple",
-        "remote sensing": "orange",
-        "land survey": "darkblue"
+        "hydrography":"blue",
+        "gis":"green",
+        "drone":"red",
+        "engineering survey":"purple",
+        "remote sensing":"orange",
+        "land survey":"darkblue"
     }
 
-    for _, row in data.iterrows():
+    for _,row in data.iterrows():
 
         popup_text = f"""
         <b>{row['company']}</b><br>
@@ -97,33 +179,43 @@ with col2:
         """
 
         folium.Marker(
-            location=[row["latitude"], row["longitude"]],
-            popup=popup_text,
-            icon=folium.Icon(color=color_map.get(row["industry"].lower(),"gray"))
+        location=[row["latitude"],row["longitude"]],
+        popup=popup_text,
+        icon=folium.Icon(
+        color=color_map.get(row["industry"].lower(),"gray")
+        )
         ).add_to(m)
 
     st_folium(m,width=800)
 
 
-# ======================
-# COMPANY INFO
-# ======================
+# =========================
+# RIGHT PANEL
+# =========================
 
-with col3:
+with col_right:
 
-    st.header("Company Information")
+    st.subheader("Company Information")
 
     company = st.selectbox(
-        "Select Company",
-        data["company"]
+    "Select Company",
+    data["company"]
     )
 
     info = data[data["company"] == company].iloc[0]
 
     if pd.notna(info["logo"]):
-        st.image(info["logo"], width=150)
 
-    st.write("Location:", info["city"], ",", info["state"])
-    st.write("Phone:", info["phone"])
-    st.write("Email:", info["email"])
-    st.write("Website:", info["website"])
+        st.image(info["logo"],width=150)
+
+    st.write("Location:",info["city"],",",info["state"])
+
+    st.write("Phone:",info["phone"])
+
+    st.write("Email:",info["email"])
+
+    st.write("Website:",info["website"])
+
+    st.subheader("Description")
+
+    st.write(info["description"])
