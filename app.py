@@ -128,40 +128,39 @@ with col_left:
 with col_map:
 
     m = folium.Map(
-        location=[4.5,102],
-        zoom_start=6,
-        tiles=None
-    )
+    location=[4.5,102],
+    zoom_start=6,
+    tiles=None
+)
 
-    # OpenStreetMap
-    folium.TileLayer(
-        "OpenStreetMap",
-        name="OpenStreetMap"
-    ).add_to(m)
+# OpenStreetMap
+folium.TileLayer(
+    "OpenStreetMap",
+    name="OpenStreetMap"
+).add_to(m)
 
-    # Satellite (Google Earth style)
-    folium.TileLayer(
-        tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-        attr="ESRI Satellite",
-        name="Satellite",
-        overlay=False,
-        control=True
-    ).add_to(m)
+# Satellite (ESRI - Google Earth style)
+folium.TileLayer(
+    tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    attr="ESRI Satellite",
+    name="Satellite"
+).add_to(m)
 
-    # Hybrid (Satellite + label)
-    folium.TileLayer(
-        tiles="https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
-        attr="ESRI Labels",
-        name="Hybrid Labels",
-        overlay=True,
-        control=True
-    ).add_to(m)
+# Hybrid Labels
+folium.TileLayer(
+    tiles="https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    attr="ESRI Labels",
+    name="Hybrid Labels"
+).add_to(m)
 
-    # Terrain style
-    folium.TileLayer(
-        "Stamen Terrain",
-        name="Terrain"
-    ).add_to(m)
+# Terrain
+folium.TileLayer(
+    tiles="https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}.jpg",
+    attr="Map tiles by Stamen Design",
+    name="Terrain"
+).add_to(m)
+
+folium.LayerControl().add_to(m)
 
     # Marker colours
     color_map = {
