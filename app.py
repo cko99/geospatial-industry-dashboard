@@ -5,6 +5,45 @@ import plotly.express as px
 from streamlit_folium import st_folium
 
 st.set_page_config(layout="wide")
+st.markdown("""
+<style>
+
+/* wallpaper background */
+.stApp{
+background-image:url("https://images.unsplash.com/photo-1469474968028-56623f02e42e");
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
+}
+
+/* dashboard container transparent */
+.block-container{
+background: transparent;
+}
+
+/* restore header */
+header[data-testid="stHeader"]{
+background: transparent;
+}
+
+/* custom dashboard title */
+header[data-testid="stHeader"]::before{
+content:"Geospatial Industry Dashboard";
+position:absolute;
+left:50%;
+transform:translateX(-50%);
+font-size:26px;
+font-weight:700;
+color:var(--text-color);
+}
+
+/* adaptive text color */
+h1,h2,h3,h4,h5,h6,p,label,span{
+color:var(--text-color);
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 
 # =========================
