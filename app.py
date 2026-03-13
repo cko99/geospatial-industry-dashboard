@@ -79,7 +79,7 @@ with col_ai:
 
 with col_title:
     st.markdown(
-        "<div style='text-align:center;font-size:26px;font-weight:700'>Geospatial Industry Dashboard</div>",
+        "<div style='text-align:center;font-size:40px;font-weight:700'>Geospatial Industry Dashboard</div>",
         unsafe_allow_html=True
     )
 
