@@ -32,6 +32,7 @@ sheet_url = "https://docs.google.com/spreadsheets/d/1Yge8HlHEiQUTazaQ1yy0hYney22
 # LOAD DATA
 try:
     data = pd.read_csv(sheet_url)
+data.columns = data.columns.str.strip().str.lower()
 except:
     st.error("Failed to load Google Sheet data. Check sharing permission.")
     st.stop()
