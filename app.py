@@ -139,11 +139,13 @@ with col_left:
 
     industry_count.columns = ["industry","count"]
 
-    fig = px.pie(
-        industry_count,
-        values="count",
-        names="industry"
-    )
+   fig = px.pie(industry_count, values="count", names="industry")
+
+fig.update_layout(
+    legend=dict(orientation="v", y=0.5, x=1),
+    paper_bgcolor="rgba(0,0,0,0)",
+    plot_bgcolor="rgba(0,0,0,0)"
+)
 
     fig.update_layout(
         legend=dict(
