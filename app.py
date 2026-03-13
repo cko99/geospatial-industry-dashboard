@@ -127,32 +127,26 @@ if industry_filter != "All":
 col_left, col_map, col_right = st.columns([1,1.8,1])
 
 
-# =====================
+# =========================
 # LEFT PANEL
-# =====================
-
+# =========================
 with col_left:
 
     st.subheader("Industry Distribution")
 
     industry_count = data["industry"].value_counts().reset_index()
+    industry_count.columns = ["industry", "count"]
 
-    industry_count.columns = ["industry","count"]
-
-   fig = px.pie(industry_count, values="count", names="industry")
-
-fig.update_layout(
-    legend=dict(orientation="v", y=0.5, x=1),
-    paper_bgcolor="rgba(0,0,0,0)",
-    plot_bgcolor="rgba(0,0,0,0)"
-)
+    fig = px.pie(
+        industry_count,
+        values="count",
+        names="industry"
+    )
 
     fig.update_layout(
-        legend=dict(
-            orientation="v",
-            y=0.5,
-            x=1
-        )
+        legend=dict(orientation="v", y=0.5, x=1),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)"
     )
 
     st.plotly_chart(fig, use_container_width=True)
@@ -161,8 +155,29 @@ fig.update_layout(
 
     state_count = data["state"].value_counts()
 
-    st.bar_chart(state_count)
+    state_df = state_count.reset_index()
+    state_df.columns = ["state", "count"]
 
+    fig_state = px.bar(
+        state_df,
+        x="state",
+        y="count"
+    )
+
+    fig_state.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)"
+    )
+
+    st.plotly_chart(fig_state, use_container_width=True)
+
+    st.subheader("AI Career Assistant")
+
+    question = st.text_input("Ask about geospatial companies")
+
+    if question:
+        st.write("Suggested companies:")
+        st.write(data["company"].head(5))
 
 # =====================
 # MAP PANEL
