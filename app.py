@@ -7,7 +7,7 @@ from streamlit_folium import st_folium
 
 st.set_page_config(layout="wide")
 
-# ---------------- STYLE ----------------
+# ---------------- CSS ----------------
 st.markdown("""
 <style>
 
@@ -36,7 +36,7 @@ height:60px;
 display:flex;
 align-items:center;
 justify-content:center;
-font-size:28px;
+font-size:26px;
 font-weight:700;
 color:white;
 z-index:999;
@@ -67,8 +67,16 @@ industry_filter = st.selectbox(
 if industry_filter != "All":
     data = data[data["industry"] == industry_filter]
 
+# ---------------- DEVICE DETECT ----------------
+is_mobile = st.sidebar.checkbox("Mobile View (for testing)", False)
+
 # ---------------- LAYOUT ----------------
-left, map_col, right = st.columns([1.2,2.8,1.2])
+if is_mobile:
+    left = st.container()
+    map_col = st.container()
+    right = st.container()
+else:
+    left, map_col, right = st.columns([1.2,2.8,1.2])
 
 # ---------------- LEFT PANEL ----------------
 with left:
@@ -78,11 +86,7 @@ with left:
     industry_count = data["industry"].value_counts().reset_index()
     industry_count.columns = ["industry","count"]
 
-    fig = px.pie(
-        industry_count,
-        values="count",
-        names="industry"
-    )
+    fig = px.pie(industry_count, values="count", names="industry")
 
     fig.update_layout(
         margin=dict(t=0,b=0,l=0,r=0),
@@ -102,13 +106,12 @@ with left:
     q = st.text_input("Ask about companies")
 
     if q:
-
         result = data[
         data["industry"].str.contains(q,case=False,na=False) |
         data["company"].str.contains(q,case=False,na=False)
         ]
 
-        if len(result) > 0:
+        if len(result)>0:
             st.write(result["company"].head(5))
         else:
             st.write("No result found")
@@ -116,13 +119,8 @@ with left:
 # ---------------- MAP ----------------
 with map_col:
 
-    m = folium.Map(
-        location=[4.5,102],
-        zoom_start=6,
-        tiles=None
-    )
+    m = folium.Map(location=[4.5,102],zoom_start=6,tiles=None)
 
-    # Basemap
     folium.TileLayer("OpenStreetMap",name="OpenStreetMap").add_to(m)
 
     folium.TileLayer(
@@ -143,7 +141,6 @@ with map_col:
     name="Terrain"
     ).add_to(m)
 
-    # Marker Cluster
     marker_cluster = MarkerCluster().add_to(m)
 
     color_map = {
@@ -155,16 +152,16 @@ with map_col:
     "land survey":"darkblue"
     }
 
-    heat_data = []
+    heat_data=[]
 
     for _,row in data.iterrows():
 
-        lat = row["latitude"]
-        lon = row["longitude"]
+        lat=row["latitude"]
+        lon=row["longitude"]
 
         heat_data.append([lat,lon])
 
-        popup = f"""
+        popup=f"""
         <b>{row.get('company')}</b><br>
         Industry: {row.get('industry')}<br>
         City: {row.get('city')}<br>
@@ -180,24 +177,45 @@ with map_col:
         )
         ).add_to(marker_cluster)
 
-    # Heatmap
     HeatMap(heat_data,radius=25).add_to(m)
 
     folium.LayerControl().add_to(m)
 
-    st_folium(m,width=950,height=650)
+    legend_html="""
+    <div style="
+    position: fixed;
+    bottom: 40px;
+    left: 40px;
+    background: rgba(255,255,255,0.7);
+    padding:10px;
+    border-radius:10px;
+    z-index:9999;
+    font-size:14px;
+    ">
+    <b>Industry</b><br>
+    <span style='color:red'>●</span> Drone<br>
+    <span style='color:green'>●</span> GIS<br>
+    <span style='color:blue'>●</span> Hydrography<br>
+    <span style='color:orange'>●</span> Remote Sensing<br>
+    <span style='color:purple'>●</span> Engineering Survey<br>
+    <span style='color:darkblue'>●</span> Land Survey
+    </div>
+    """
+
+    m.get_root().html.add_child(folium.Element(legend_html))
+
+    map_height = 500 if is_mobile else 650
+
+    st_folium(m,width=None,height=map_height)
 
 # ---------------- RIGHT PANEL ----------------
 with right:
 
     st.markdown("### Company Information")
 
-    company = st.selectbox(
-    "Select Company",
-    data["company"]
-    )
+    company = st.selectbox("Select Company",data["company"])
 
-    info = data[data["company"] == company].iloc[0]
+    info = data[data["company"]==company].iloc[0]
 
     if "logo" in data.columns and pd.notna(info.get("logo")):
         st.image(info["logo"],width=160)
@@ -217,12 +235,6 @@ with right:
 
     if "description" in data.columns:
         st.write(info.get("description"))
-
-    st.markdown("### About Dashboard")
-
-    st.write("""
-This dashboard maps geospatial companies across Malaysia including drone mapping, GIS consulting, hydrography and surveying firms.
-""")
 
     st.download_button(
     "Download CSV",
