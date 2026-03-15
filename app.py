@@ -23,17 +23,20 @@ st.set_page_config(
 st.markdown("""
 <style>
 
+/* Lock full page */
 html, body, [data-testid="stAppViewContainer"]{
 height:100vh;
 overflow:hidden;
 }
 
+/* Background wallpaper */
 .stApp{
 background-image:url("https://images.unsplash.com/photo-1469474968028-56623f02e42e");
 background-size:cover;
 background-position:center;
 }
 
+/* Remove padding */
 .block-container{
 padding-top:0.5rem;
 padding-bottom:0rem;
@@ -41,21 +44,68 @@ padding-left:2rem;
 padding-right:2rem;
 }
 
+/* Glass panel */
 div[data-testid="stVerticalBlock"] > div{
 background:rgba(20,20,20,0.55);
 padding:14px;
 border-radius:14px;
 backdrop-filter:blur(10px);
 border:1px solid rgba(255,255,255,0.1);
-color:white;
+color:white !important;
 }
 
+/* FORCE WHITE TEXT */
+h1,h2,h3,h4,h5,h6,p,span,label,div{
+color:white !important;
+}
+
+/* Streamlit widgets text */
+.stSelectbox label{
+color:white !important;
+}
+
+.stMarkdown{
+color:white !important;
+}
+
+.stMetric{
+color:white !important;
+}
+
+/* Dropdown text */
+[data-baseweb="select"] span{
+color:white !important;
+}
+
+/* Dataframe text */
+.stDataFrame{
+color:white !important;
+}
+
+/* Header */
 .header-text{
 text-align:center;
 font-size:28px;
 font-weight:800;
-color:white;
+color:white !important;
 margin-bottom:6px;
+}
+
+/* Plotly background transparent */
+.js-plotly-plot{
+background:transparent !important;
+}
+
+/* Dropdown background */
+[data-baseweb="select"]{
+background:rgba(0,0,0,0.4);
+border-radius:8px;
+}
+
+/* Text input */
+input{
+color:white !important;
+background:rgba(0,0,0,0.4) !important;
 }
 
 </style>
