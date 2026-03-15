@@ -65,7 +65,7 @@ margin-bottom:6px;
 # GOOGLE SHEET DATA
 # --------------------------------------
 
-sheet_url = "YOUR_GOOGLE_SHEET_CSV_LINK"
+sheet_url = "https://docs.google.com/spreadsheets/d/1Yge8HlHEiQUTazaQ1yy0hYney22MFMYzlMBfjBoWHD8/export?format=csv"
 
 data = pd.read_csv(sheet_url, header=1)
 
