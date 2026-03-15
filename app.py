@@ -23,89 +23,112 @@ st.set_page_config(
 st.markdown("""
 <style>
 
-/* Lock full page */
+/* =========================
+FULL VIEWPORT DASHBOARD
+========================= */
+
 html, body, [data-testid="stAppViewContainer"]{
 height:100vh;
 overflow:hidden;
 }
 
-/* Background wallpaper */
+/* Remove Streamlit padding */
+.block-container{
+padding-top:0.5rem;
+padding-bottom:0rem;
+padding-left:1.5rem;
+padding-right:1.5rem;
+}
+
+/* =========================
+BACKGROUND
+========================= */
+
 .stApp{
 background-image:url("https://images.unsplash.com/photo-1469474968028-56623f02e42e");
 background-size:cover;
 background-position:center;
 }
 
-/* Remove padding */
-.block-container{
-padding-top:0.5rem;
-padding-bottom:0rem;
-padding-left:2rem;
-padding-right:2rem;
-}
+/* =========================
+HEADER
+========================= */
 
-/* Glass panel */
-div[data-testid="stVerticalBlock"] > div{
-background:rgba(20,20,20,0.55);
-padding:14px;
-border-radius:14px;
-backdrop-filter:blur(10px);
-border:1px solid rgba(255,255,255,0.1);
-color:white !important;
-}
-
-/* FORCE WHITE TEXT */
-h1,h2,h3,h4,h5,h6,p,span,label,div{
-color:white !important;
-}
-
-/* Streamlit widgets text */
-.stSelectbox label{
-color:white !important;
-}
-
-.stMarkdown{
-color:white !important;
-}
-
-.stMetric{
-color:white !important;
-}
-
-/* Dropdown text */
-[data-baseweb="select"] span{
-color:white !important;
-}
-
-/* Dataframe text */
-.stDataFrame{
-color:white !important;
-}
-
-/* Header */
 .header-text{
 text-align:center;
 font-size:28px;
 font-weight:800;
 color:white !important;
-margin-bottom:6px;
+margin-bottom:4px;
 }
 
-/* Plotly background transparent */
+/* =========================
+GLASS PANELS
+========================= */
+
+div[data-testid="stVerticalBlock"] > div{
+background:rgba(20,20,20,0.55);
+padding:12px;
+border-radius:12px;
+backdrop-filter:blur(10px);
+border:1px solid rgba(255,255,255,0.1);
+color:white !important;
+}
+
+/* =========================
+FORCE WHITE TEXT
+========================= */
+
+h1,h2,h3,h4,h5,h6,p,span,label,div{
+color:white !important;
+}
+
+/* =========================
+PLOTLY FIX
+========================= */
+
 .js-plotly-plot{
 background:transparent !important;
 }
 
-/* Dropdown background */
+/* =========================
+DROPDOWN DARK MODE
+========================= */
+
 [data-baseweb="select"]{
-background:rgba(0,0,0,0.4);
-border-radius:8px;
+background:rgba(0,0,0,0.6) !important;
+color:white !important;
 }
 
-/* Text input */
-input{
+[data-baseweb="select"] div{
 color:white !important;
-background:rgba(0,0,0,0.4) !important;
+}
+
+/* =========================
+RESPONSIVE BREAKPOINTS
+========================= */
+
+/* Tablet */
+@media (max-width:1200px){
+
+.header-text{
+font-size:24px;
+}
+
+}
+
+/* Phone */
+@media (max-width:768px){
+
+.header-text{
+font-size:18px;
+}
+
+.block-container{
+padding-left:0.7rem;
+padding-right:0.7rem;
+}
+
 }
 
 </style>
