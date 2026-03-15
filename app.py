@@ -138,7 +138,7 @@ padding-right:0.7rem;
 # LOAD DATA (CACHE)
 # --------------------------------------
 
-@st.cache_data
+@st.cache_data(ttl=60)
 def load_data():
 
     sheet_url = "https://docs.google.com/spreadsheets/d/1Yge8HlHEiQUTazaQ1yy0hYney22MFMYzlMBfjBoWHD8/export?format=csv"
@@ -167,7 +167,8 @@ st.markdown(
 '<div class="header-text">Geospatial Industry Dashboard</div>',
 unsafe_allow_html=True
 )
-
+if st.button("🔄 Refresh Data"):
+    st.cache_data.clear()
 # --------------------------------------
 # KPI
 # --------------------------------------
