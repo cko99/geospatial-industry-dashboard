@@ -17,7 +17,7 @@ st.set_page_config(
 )
 
 # --------------------------------------
-# CSS (ONE PAGE DASHBOARD)
+# CSS
 # --------------------------------------
 
 st.markdown("""
@@ -62,18 +62,29 @@ margin-bottom:6px;
 """, unsafe_allow_html=True)
 
 # --------------------------------------
-# GOOGLE SHEET DATA
+# LOAD DATA (CACHE)
 # --------------------------------------
 
-sheet_url = "https://docs.google.com/spreadsheets/d/1Yge8HlHEiQUTazaQ1yy0hYney22MFMYzlMBfjBoWHD8/export?format=csv"
+@st.cache_data
+def load_data():
 
-data = pd.read_csv(sheet_url, header=1)
+    sheet_url = "https://docs.google.com/spreadsheets/d/1Yge8HlHEiQUTazaQ1yy0hYney22MFMYzlMBfjBoWHD8/export?format=csv"
 
-data = data.loc[:, ~data.columns.str.contains("^Unnamed")]
-data.columns = data.columns.str.strip().str.lower()
+    df = pd.read_csv(sheet_url, header=1)
 
-data["latitude"] = pd.to_numeric(data["latitude"], errors="coerce")
-data["longitude"] = pd.to_numeric(data["longitude"], errors="coerce")
+    df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
+    df.columns = df.columns.str.strip().str.lower()
+
+    df["latitude"] = pd.to_numeric(df["latitude"], errors="coerce")
+    df["longitude"] = pd.to_numeric(df["longitude"], errors="coerce")
+
+    df["industry"] = df["industry"].fillna("Unknown")
+
+    df = df.dropna(subset=["latitude","longitude"])
+
+    return df
+
+data = load_data()
 
 # --------------------------------------
 # HEADER
@@ -85,7 +96,7 @@ unsafe_allow_html=True
 )
 
 # --------------------------------------
-# KPI PANEL
+# KPI
 # --------------------------------------
 
 k1,k2,k3,k4 = st.columns(4)
@@ -99,11 +110,12 @@ k4.metric("Top Industry", data["industry"].mode()[0])
 # FILTER
 # --------------------------------------
 
-industries = ["All"] + sorted(data["industry"].dropna().unique())
+industries = ["All"] + sorted(data["industry"].unique())
 
 _,fcol,_ = st.columns([1,2,1])
 
 with fcol:
+
     selected_industry = st.selectbox(
         "Industry Filter",
         industries,
@@ -111,20 +123,24 @@ with fcol:
     )
 
 if selected_industry == "All":
-    df = data
+    df = data.copy()
 else:
-    df = data[data["industry"] == selected_industry]
+    df = data[data["industry"] == selected_industry].copy()
 
 # --------------------------------------
 # CLUSTER ANALYSIS
 # --------------------------------------
 
-coords = df[["latitude","longitude"]].dropna()
+coords = df[["latitude","longitude"]]
 
 if len(coords) >= 3:
+
     kmeans = KMeans(n_clusters=3, random_state=0)
-    df.loc[coords.index,"cluster"] = kmeans.fit_predict(coords)
+
+    df["cluster"] = kmeans.fit_predict(coords)
+
 else:
+
     df["cluster"] = 0
 
 # --------------------------------------
@@ -221,10 +237,7 @@ with col_map:
         tiles=None
     )
 
-    folium.TileLayer(
-        "openstreetmap",
-        name="OpenStreetMap"
-    ).add_to(m)
+    folium.TileLayer("openstreetmap", name="OpenStreetMap").add_to(m)
 
     folium.TileLayer(
         tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
@@ -248,24 +261,27 @@ with col_map:
 
     # Heatmap
 
-    heat_data = df[["latitude","longitude"]].dropna().values.tolist()
+    heat_data = df[["latitude","longitude"]].values.tolist()
 
     HeatMap(
         heat_data,
-        radius=20,
+        radius=18,
         blur=15
     ).add_to(m)
 
     color_map = {
-    "Drone":"red",
-    "GIS":"green",
-    "Hydrography":"blue",
-    "Remote Sensing":"orange",
-    "Engineering Survey":"purple",
-    "Land Survey":"darkblue"
+        "Drone":"red",
+        "GIS":"green",
+        "Hydrography":"blue",
+        "Remote Sensing":"orange",
+        "Engineering Survey":"purple",
+        "Land Survey":"darkblue"
     }
 
     for _,row in df.iterrows():
+
+        if pd.isna(row["latitude"]) or pd.isna(row["longitude"]):
+            continue
 
         popup_html=f"""
         <b>{row['company']}</b><br>
